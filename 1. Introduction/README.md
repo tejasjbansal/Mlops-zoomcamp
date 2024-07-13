@@ -1,1 +1,3 @@
 ## 1. Introduction
+
+The focus is on the best practices for deploying machine learning models into production. The course uses a real-world example of predicting taxi ride durations to illustrate key concepts. The process of machine learning projects is simplified into three stages: design, train, and operate. In the design stage, it's determined if machine learning is the right tool for the problem. If so, the train stage involves experimenting to find the best model. The operate stage includes deploying the model as a web service and ensuring it performs well over time. MLOps practices help automate and streamline these stages, making it easier to reproduce results, deploy models, and monitor their performance.
