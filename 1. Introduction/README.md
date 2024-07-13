@@ -16,5 +16,3 @@ Orchestrated: MLOps processes are integrated and orchestrated across the entire 
 Governed: MLOps is fully integrated into the organization’s governance framework. Compliance, security, and regulatory considerations are taken into account throughout the ML lifecycle. Model performance and monitoring are monitored continuously, and feedback loops are established to improve models over time. Model explainability and interpretability are given importance.
 
 Achieving higher levels of MLOps maturity requires investment in infrastructure, tooling, and establishing best practices. It also involves fostering collaboration and communication between different teams involved in ML development and deployment. Organizations with higher MLOps maturity are better equipped to handle the challenges of scaling ML projects, ensuring model reliability, and maximizing the value derived from ML initiatives.
-
-A detailed overview is provided here by Microsoft Azure.
