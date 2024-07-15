@@ -1,18 +1,81 @@
-#### 1. Introduction
+# Goals
 
-The focus is on the best practices for deploying machine learning models into production. The course uses a real-world example of predicting taxi ride durations to illustrate key concepts. The process of machine learning projects is simplified into three stages: design, train, and operate. In the design stage, it's determined if machine learning is the right tool for the problem. If so, the train stage involves experimenting to find the best model. The operate stage includes deploying the model as a web service and ensuring it performs well over time. MLOps practices help automate and streamline these stages, making it easier to reproduce results, deploy models, and monitor their performance.
+The goal of MLOPS is putting ml in production, this is doing good use of tools and practices, in this first part the goal is predict the duration of a taxi trip. generally the way to good MLOps is `desing -> train -> operate`. In this case is important that the model will deploy in an API, using flask and docker (this part is important, is necesary the knowledge of create a docker and API in flask - python).
 
-#### 1.4 MLOps maturity model
-MLOps (Machine Learning Operations) maturity refers to the level of sophistication and effectiveness in managing and operationalizing machine learning (ML) systems within an organization. It represents the organization’s ability to develop, deploy, monitor, and maintain ML models in a reliable and scalable manner. MLOps maturity typically evolves through different stages, which can vary depending on the framework or model used. Here is a general overview of the stages:
+# Environment preparation
 
-Ad hoc: In the early stages, ML development is ad hoc and lacks a systematic approach. Models are developed and deployed manually without standardized processes or version control. There is limited collaboration between data scientists and IT/DevOps teams.
+for this part is required prepare a machine with the necesary to create models and create the infraestructure in docker, in the original video is used a EC2 instance with the next specs: *Ubuntu 20.04*, *x86-64* and type: *t2.xlarge (4vcpu - 16 GiB ram - 30Gb rom, $0.1856/hr)*, I recommend use **t3.xlarge ($0.1664)** in US East (N. Virginia), but depends of location of student.
 
-Managed: As organizations recognize the importance of ML, they start implementing basic management practices. Version control is introduced, and models are tracked. However, there might still be manual steps involved, and deployment processes may not be well-defined.
+I create a bash to install necesary tools (only copy-paste):
 
-Automated: At this stage, automation plays a crucial role in MLOps. Organizations adopt continuous integration and deployment (CI/CD) pipelines to automate model training, evaluation, and deployment. Infrastructure provisioning, testing, and monitoring become more streamlined. There is a stronger collaboration between data scientists, software engineers, and IT/DevOps teams.
+```bash
+#!/bin/bash
 
-Orchestrated: MLOps processes are integrated and orchestrated across the entire ML lifecycle. Advanced automation tools and frameworks are employed to manage the complexity of ML workflows. There is a focus on reproducibility, model versioning, and experiment tracking. ML models are deployed in a scalable and efficient manner, making use of containerization and orchestration platforms.
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-Governed: MLOps is fully integrated into the organization’s governance framework. Compliance, security, and regulatory considerations are taken into account throughout the ML lifecycle. Model performance and monitoring are monitored continuously, and feedback loops are established to improve models over time. Model explainability and interpretability are given importance.
+sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo usermod -aG docker ${USER}
 
-Achieving higher levels of MLOps maturity requires investment in infrastructure, tooling, and establishing best practices. It also involves fostering collaboration and communication between different teams involved in ML development and deployment. Organizations with higher MLOps maturity are better equipped to handle the challenges of scaling ML projects, ensuring model reliability, and maximizing the value derived from ML initiatives.
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+wget https://repo.anaconda.com/archive/Anaconda3-2022.05-Linux-x86_64.sh
+chmod +x Anaconda3-2022.05-Linux-x86_64.sh
+./Anaconda3-2022.05-Linux-x86_64.sh
+```
+
+Copy in one file {name}.sh and give permissions of execute, is possible avoid read or multiple enters in licence of anaconda pushing `q`
+
+Some necesaries knowledges are:
+- experience with programming (python)
+- being comfortable with command line
+- exposure to ML is helpful
+
+The data to use is:
+- dataset used is NYC taxi
+- when I start this course I only get data from 2011 and next years 
+
+To share learning in linkedin or twitter use the #66DaysOfMLOps and #mlopszoomcamp 
+
+# Training model
+
+- is necesary the order in the notebook, for example:
+   1. read_data
+   2. train and validate data
+   3. multiple ml
+   4. save of model in bin
+   5. the model contains experiment tracker and model registry
+
+The steps to create the model:
+- load an prepare data
+- vectorize the values -> dct values
+- train in different values -> model
+- machine learning services, to check time of trip
+- the model is deploy and before is necesary the monitoring, to check that model is effective
+- exclude the human using the pipeline to create model v2
+
+# Course overview
+
+To note, the notebook will execute multiple times, in this step this is cleaned to use like a pipeline. Is created the function read_dataframe, later is changed because the dataframe changes from csv to parquet. The logs is very important for experimental tracker. The saved model must have a good name to know how to use, is very very important the use of registry models, like docker.
+
+The flow: load and prepare data -> vectorize -> train, this is the codepipeline in the course, the tags is very importants for example: TRAIN_DATA = Jan 2021, VAL_DATA = Fec 2021, MODEL = LR, and execute with `python pipeline.py`, with this obtains the model this is put in machine learning service to comunicate with the user and response the time of trip, is important the monitoring, to check the performance.
+
+A good practice is a good code, this be mainteinable, tested, clean and good documented, deployed in a docker
+
+# Maturity model
+
+level 0 to level 4
+
+Talk of model monitoring, automating the process, alerts about drop in performance and automatic train and deploy, removing the human interactivity.
+
+exists 5 different models from 0 to complete automation
+
+0. Nothing, no automation, all code is in Jupyter, most common the POC
+1. DevOps, no MLOps, some automations, good practices in eng. deploy a web services, releases are automated, tipics metrics of DevOps, Unit and integration tests, CI/CD, Ops metrics, no experiment tracking, no repoducibility, ds separated of engs.
+2. Automated training, exists a python script to train, and training is automated, pipeline, experiment tracking, model registry, low friction deployment, DS work with eng., in this step probabily multiple models is running in production (2-3+ cases)
+3. Automated deployment, easy deploy model, exists ml platform, A/B test, ML with versions, monitoring exists
+4. Full MLOps automations, complete automations
