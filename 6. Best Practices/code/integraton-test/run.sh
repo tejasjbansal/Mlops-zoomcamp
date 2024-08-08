@@ -18,7 +18,7 @@ fi
 
 export PREDICTIONS_STREAM_NAME="ride_predictions"
 
-docker-compose up -d
+docker compose up -d
 
 sleep 15
 
