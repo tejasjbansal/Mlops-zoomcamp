@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-# if [[ -z "${GITHUB_ACTIONS}" ]]; then
-#   cd "$(dirname "$0")"
-# fi
+if [[ -z "${GITHUB_ACTIONS}" ]]; then
+  cd "$(dirname "$0")"
+fi
 
-cd "$(dirname "$0")"
+# cd "$(dirname "$0")"
 
 
 if [ "${LOCAL_IMAGE_NAME}" == "" ]; then 
@@ -18,7 +18,7 @@ fi
 
 export PREDICTIONS_STREAM_NAME="ride_predictions"
 
-docker-compose up -d
+docker compose up -d
 
 sleep 15
 
@@ -32,8 +32,8 @@ pipenv run python test_docker.py
 ERROR_CODE=$?
 
 if [ ${ERROR_CODE} != 0 ]; then
-    docker-compose logs
-    docker-compose down
+    docker compose logs
+    docker compose down
     exit ${ERROR_CODE}
 fi
 
@@ -43,10 +43,10 @@ pipenv run python test_kinesis.py
 ERROR_CODE=$?
 
 if [ ${ERROR_CODE} != 0 ]; then
-    docker-compose logs
-    docker-compose down
+    docker compose logs
+    docker compose down
     exit ${ERROR_CODE}
 fi
 
 
-docker-compose down
+docker compose down
