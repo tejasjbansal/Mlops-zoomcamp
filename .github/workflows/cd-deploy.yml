@@ -1,0 +1,7 @@
+name: CD-Deploy
+on:
+  push:
+    branches:
+      - 'develop'
+    paths:
+      - '6. Best Practices/code/**'
